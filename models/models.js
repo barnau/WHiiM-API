@@ -7,8 +7,40 @@ var MessageSchema = new Schema({
 	message: String,
 	photoURL: String,
 	sentBy: String,
-	setnByID: String
+	setnByID: String,
 	timeStamp: {type: Date, default: Date.now}
+});
+
+var BasicUserSchema = new Schema({
+	name: String,
+	id: String
+});
+
+var UserArraySchema = new Schema({
+	user: [BasicUserSchema]
+});
+
+var ViewedEventSchema = new Schema({
+	eventId: String,
+	declined: {type: Boolean, default: false}
+});
+
+var GroupSchema = new Schema({
+	hasNewChatEntry: {type: Boolean, default: false},
+	key: String,
+	timeOfLastMessage: Date,
+	title: String
+});
+
+var NotificationSchema = new Schema({
+	active: Boolean,
+	eventKey: String,
+	ownerName: String,
+	pending: {type: Boolean, default: false},
+	photoURL: String,
+	prefix: String,
+	timeStamp: {type: Date, default: Date.now},
+	title: String
 })
 
 
@@ -24,8 +56,8 @@ var EventSchema = new Schema({
 	photoURL: String,
 	requiredUsers: Number,
 	timeStamp: {type: Date, default: Date.now}
-
 });
+
 
 var UserSchema = new Schema({
 	aboutMe: String,
@@ -36,10 +68,16 @@ var UserSchema = new Schema({
 	photoURL: String,
 	events: [EventSchema],
 	groups: [GroupSchema],
-	notifications: [NotificationSchema],
-	viewedEvents: [ViewedEventSchema]
+ 	notifications: [NotificationSchema],
+ 	viewedEvents: [ViewedEventSchema],
+ 	radius: {type: Number, default: 5}
+	
 });
 
 var MessageArraySchema = new Schema({
 	messages: [MessageSchema]
-})
+});
+
+var User = mongoose.model("User", UserSchema);
+
+module.exports.User = User;
