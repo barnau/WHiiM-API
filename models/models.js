@@ -21,8 +21,7 @@ var UserArraySchema = new Schema({
 });
 
 var ViewedEventSchema = new Schema({
-	eventId: String,
-	declined: {type: Boolean, default: false}
+	eventId: String
 });
 
 var GroupSchema = new Schema({
@@ -33,12 +32,12 @@ var GroupSchema = new Schema({
 });
 
 var NotificationSchema = new Schema({
-	active: Boolean,
+	active: {type: Boolean, default: true},
 	eventKey: String,
 	ownerName: String,
-	pending: {type: Boolean, default: false},
+	pending: {type: Boolean, default: true},
 	photoURL: String,
-	prefix: String,
+	prefix: {type: String, default: "wants to join"},
 	timeStamp: {type: Date, default: Date.now},
 	title: String
 })
@@ -49,20 +48,26 @@ var EventSchema = new Schema({
 	category: String,
 	coords: [Number],
 	description: String,
-	eventKey: String,
 	name: String,
-	ownerId: String,
-	ownerName: String,
-	photoURL: String,
-	requiredUsers: Number,
+	requiredUsers: {type: Number, default: 1},
 	timeStamp: {type: Date, default: Date.now}
 });
+
+EventSchema.method("appendUserId",function(event, id, callback) {
+	Object.assign(this, event, {ownerId: id});
+	this.parent().save(callback);
+});
+
+EventSchema.pre("save", function(next) {
+	console.log(this.parent());
+	next();
+})
 
 
 var UserSchema = new Schema({
 	aboutMe: String,
 	age: Number,
-	category: String,
+	category: {type: String, default: "Select an activity"},
 	displayName: String,
 	email: String,
 	photoURL: String,
@@ -79,5 +84,6 @@ var MessageArraySchema = new Schema({
 });
 
 var User = mongoose.model("User", UserSchema);
-
+var Event = mongoose.model("Event", EventSchema);
 module.exports.User = User;
+module.exports.Event = Event;

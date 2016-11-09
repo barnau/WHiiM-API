@@ -1,8 +1,8 @@
 'use strict';
 var express = require("express");
 var router = express.Router();
-var User = require("../models/models").User
-
+var User = require("../models/models").User;
+var Event = require("../models/models").Event;
 router.param("uID", function(req, res, next, id) {
 	User.findById(id, function(err, doc) {
 		if(err) return next(err);
@@ -38,9 +38,9 @@ router.get("/:uID", function(req, res, next) {
 	res.json(req.user);
 });
 //Route get user's groups
-router.get("/:uID/groups", function(req, res, next) {
-	req.user.groups.find
-});
+// router.get("/:uID/groups", function(req, res, next) {
+// 	req.user.groups.find
+// });
 //post new group
 router.post("/:uID/groups", function(req, res, next) {
 	req.user.groups.push(req.body);
@@ -65,17 +65,30 @@ router.post("/:uID/viewedEvents", function(req, res, next) {
 	})
 });
 
-router.get("/:uID/events", function(req, res, next) {
-	res.json({
-		text: "hello from get users events"
+// router.get("/:uID/events", function(req, res, next) {
+// 	res.json({
+// 		text: "hello from get users events"
+// 	});
+// });
+
+router.post("/:uID/events", function(req, res, next) {
+	req.user.events.push(req.body);
+	req.user.save(function(err, user) {
+		if (err) return next(err);
+		res.status = 201;
+		res.json(user);
 	});
 });
 
-router.post("/:uID/events", function(req, res, next) {
-	res.json({
-		text: "hello from post new event"
+router.post("/:uID/notifications", function(req, res, next) {
+	req.user.notifications.push(req.body);
+	req.user.save(function(err, user) {
+		if(err) return next(err);
+		res.status = 201;
+		res.json(user);
 	});
 });
+
 
 
 
