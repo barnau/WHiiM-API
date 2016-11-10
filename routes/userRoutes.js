@@ -28,6 +28,16 @@ router.param("gID", function(req, res, next, id) {
 
 });
 
+router.param("nID", function(req, res, next, id) {
+	req.notification = req.user.notifications.id(id);
+	if(!req.notification) {
+		err = new Error("Not Found");
+		err.status = 404;
+		return next(err);
+	}
+	return next();
+})
+
 //Route to get all users
 router.get("/", function(req, res, next) {
 	User.find({}, function(err, users) {
@@ -113,6 +123,13 @@ router.post("/:uID/notifications", function(req, res, next) {
 		res.json(user);
 	});
 });
+
+router.put("/:uID/notifications/:nID", function(req, res, next) {
+	req.notification.update(req.body, function(err, result) {
+		if (err) return next(err);
+		res.json(result);
+	})
+})
 
 
 

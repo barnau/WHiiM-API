@@ -45,6 +45,11 @@ var NotificationSchema = new Schema({
 	prefix: {type: String, default: "wants to join"},
 	timeStamp: {type: Date, default: Date.now},
 	title: String
+});
+
+NotificationSchema.method("update", function(updates, callback) {
+	Object.assign(this, updates);
+	this.parent().save(callback);
 })
 
 
