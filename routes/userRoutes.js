@@ -3,6 +3,7 @@ var express = require("express");
 var router = express.Router();
 var User = require("../models/models").User;
 var Event = require("../models/models").Event;
+
 router.param("uID", function(req, res, next, id) {
 	User.findById(id, function(err, doc) {
 		if(err) return next(err);
@@ -13,9 +14,19 @@ router.param("uID", function(req, res, next, id) {
 		}
 		req.user = doc;
 		return next();
-	})
-})
+	});
+});
 
+router.param("gID", function(req, res, next, id) {
+	req.group = req.user.groups.id(id);
+	if(!req.group) {
+		err = new Error("Not Found");
+		err.status = 404;
+		return next(err);
+	}
+	return next();
+
+});
 
 //Route to get all users
 router.get("/", function(req, res, next) {
@@ -49,6 +60,20 @@ router.post("/:uID/groups", function(req, res, next) {
 		res.status = 201;
 		res.json(user);
 	})
+});
+
+router.put("/:uID/groups/:gID", function(req, res, next) {
+	console.log(req.group);
+	console.log(req.body)
+	req.group.update(req.body, function(err, result) {
+		if(err) return next(err);
+		res.json(result);
+	});
+	
+	// req.group.update(req.body, function(err, result) {
+	// 	if(err) return next(err);
+	// 	res.json(result);
+	// });
 });
 
 // //Route get viewed events

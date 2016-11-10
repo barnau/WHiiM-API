@@ -31,6 +31,11 @@ var GroupSchema = new Schema({
 	title: String
 });
 
+GroupSchema.method("update", function(updates, callback) {
+	Object.assign(this, updates);
+	this.parent().save(callback);
+});
+
 var NotificationSchema = new Schema({
 	active: {type: Boolean, default: true},
 	eventKey: String,
