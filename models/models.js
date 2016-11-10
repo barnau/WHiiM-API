@@ -63,6 +63,11 @@ var EventSchema = new Schema({
 	timeStamp: {type: Date, default: Date.now}
 });
 
+EventSchema.method("update", function(updates, callback) {
+	Object.assign(this, updates);
+	this.parent().save(callback);
+})
+
 EventSchema.method("appendUserId",function(event, id, callback) {
 	Object.assign(this, event, {ownerId: id});
 	this.parent().save(callback);
